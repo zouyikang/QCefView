@@ -31,6 +31,18 @@ void QCefViewBrowserApp::OnBeforeCommandLineProcessing(
 	command_line->AppendSwitch("enable-direct-write");
 	command_line->AppendSwitch("allow-file-access-from-files");
 	command_line->AppendSwitchWithValue("renderer-process-limit", "1");
+
+	// proxy
+	command_line->AppendSwitch("no-proxy-server");
+
+	// security
+	command_line->AppendSwitch("disable-web-security");
+
+	// media
+	command_line->AppendSwitchWithValue("enable-media-stream", "1");
+
+	// flash
+	command_line->AppendSwitchWithValue("register-pepper-plugins", "pepflashplayer.dll;application/x-shockwave-flash");
 }
 
 void QCefViewBrowserApp::OnRegisterCustomSchemes(

@@ -68,12 +68,7 @@ public:
 	/// <summary>
 	/// 
 	/// </summary>
-	QCefView(const QString url, QWidget* parent = 0);
-
-	/// <summary>
-	/// 
-	/// </summary>
-	QCefView(QWidget* parent = 0);
+	QCefView(bool dpi, bool cache, const QString& filename, const QString& url, QWidget* parent = 0);
 
 	/// <summary>
 	/// 
@@ -196,6 +191,17 @@ public:
 	/// </summary>
 	/// <param name="handler"></param>
 	void setKeyboardHandler(CefKeyboardHandler* handler);
+
+	void deleteCookies();
+
+	void setCookie(const QString& name,
+		const QString& value,
+		const QString& domain,
+		const QString& path);
+
+signals:
+	void urlRequest(const QString& url);
+	void urlChanged(const QString& url);
 
 protected:
 	/// <summary>

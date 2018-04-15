@@ -11,11 +11,20 @@
 
 #define CEF_BROWSER_WINDOW_CLASS_NAME_A "CefBrowserWindow"
 
-CCefWindow::CCefWindow(QWindow *parent /*= 0*/)
+bool CCefWindow::enable_high_dpi;
+
+bool CCefWindow::enable_local_storage;
+
+QString CCefWindow::cache_filename;
+
+CCefWindow::CCefWindow(bool dpi, bool cache, const QString& filename, QWindow* parent)
 	: QWindow(parent)
 	, hwndCefBrowser_(nullptr)
 {
 	setFlags(Qt::FramelessWindowHint);
+	enable_high_dpi = dpi;
+	enable_local_storage = cache;
+	cache_filename = filename;
 
 	CCefManager::getInstance().initializeCef();
 }

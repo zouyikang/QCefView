@@ -19,8 +19,11 @@
 #include "../CCefWindow.h"
 #include "QCefQueryHandler.h"
 
+#include <QObject>
+
 class QCefViewBrowserHandler
-	: public CefClient
+	: public QObject
+	, public CefClient
 	, public CefContextMenuHandler
 	, public CefDisplayHandler
 	, public CefDragHandler
@@ -30,6 +33,8 @@ class QCefViewBrowserHandler
 	, public CefLoadHandler
 	, public CefRequestHandler
 {
+	Q_OBJECT
+
 public:
 	/// <summary>
 	/// 
@@ -263,6 +268,18 @@ public:
 	{
 		pKeyboardHandler_ = handler;
 	}
+
+public:
+	void ShowDevTools(CefRefPtr<CefBrowser> browser, const CefPoint& inspect_element_at);
+	void DeleteCookies();
+	void SetCookie(const CefString& name,
+		const CefString& value,
+		const CefString& domain,
+		const CefString& path);
+
+signals:
+	void urlRequest(const QString& url);
+	void urlChanged(const QString& url);
 
 private:
 	/// <summary>

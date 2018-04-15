@@ -54,6 +54,7 @@ void QCefViewBrowserHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser,
 	CEF_REQUIRE_UI_THREAD();
 
 	model->Clear();
+	model->AddItem(1, "&Show DevTools");
 }
 
 bool QCefViewBrowserHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
@@ -62,6 +63,15 @@ bool QCefViewBrowserHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
 	int command_id, EventFlags event_flags)
 {
 	CEF_REQUIRE_UI_THREAD();
+
+	switch (command_id)
+	{
+	case 1:
+		ShowDevTools(browser, CefPoint());
+		return true;
+	default:
+		break;
+	}
 
 	return false;
 }
@@ -72,6 +82,7 @@ void QCefViewBrowserHandler::OnAddressChange(CefRefPtr<CefBrowser> browser,
 {
 	CEF_REQUIRE_UI_THREAD();
 
+	emit urlChanged(QString::fromStdString(url.ToString()));
 }
 
 void QCefViewBrowserHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
@@ -144,6 +155,10 @@ bool QCefViewBrowserHandler::OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
 	bool* is_keyboard_shortcut)
 {
 	CEF_REQUIRE_UI_THREAD();
+
+	if (!event.focus_on_editable_field && event.windows_key_code == VK_BACK) {
+		return true;
+	}
 
 	return false;
 }
@@ -328,6 +343,9 @@ bool QCefViewBrowserHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
 	bool is_redirect)
 {
 	CEF_REQUIRE_UI_THREAD();
+
+	QString url = QString::fromStdString(request->GetURL().ToString());
+	emit urlRequest(url);
 
 	message_router_->OnBeforeBrowse(browser, frame);
 	return false;
@@ -521,4 +539,39 @@ bool QCefViewBrowserHandler::DispatchNotifyRequest(CefRefPtr<CefBrowser> browser
 	}
 
 	return false;
+}
+
+
+void QCefViewBrowserHandler::ShowDevTools(CefRefPtr<CefBrowser> browser, const CefPoint& inspect_element_at) 
+{
+	CefWindowInfo info;
+	CefBrowserSettings settings;
+	info.SetAsPopup(browser->GetHost()->GetWindowHandle(), "DevTools");
+	browser->GetHost()->ShowDevTools(info, browser->GetHost()->GetClient(), settings, inspect_element_at);
+}
+
+void QCefViewBrowserHandler::DeleteCookies()
+{
+	CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager(nullptr);
+	CefRefPtr<CefDeleteCookiesCallback> deleteCookieCallback;
+	CefPostTask(TID_IO, CefCreateClosureTask(base::Bind(base::IgnoreResult(&CefCookieManager::DeleteCookies), manager, CefString(""), CefString(""), deleteCookieCallback)));
+}
+
+void QCefViewBrowserHandler::SetCookie(
+	const CefString& name,
+	const CefString& value,
+	const CefString& domain,
+	const CefString& path)
+{
+	CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager(nullptr);
+
+	CefCookie cookie;
+	CefString(&cookie.name) = name;
+	CefString(&cookie.value) = value;
+	CefString(&cookie.domain) = domain;
+	CefString(&cookie.path) = path;
+	cookie.has_expires = false;
+
+	CefRefPtr<CefSetCookieCallback> setCookieCallback;
+	CefPostTask(TID_IO, CefCreateClosureTask(base::Bind(base::IgnoreResult(&CefCookieManager::SetCookie), manager, domain, cookie, setCookieCallback)));
 }

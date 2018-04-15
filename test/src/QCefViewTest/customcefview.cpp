@@ -3,7 +3,7 @@
 #include <QColor>
 #include "customcefview.h"
 CustomCefView::CustomCefView(const QString& url, QWidget *parent)
-	: QCefView(url, parent)
+	: QCefView(false, true, "", url, parent)
 {
 
 }

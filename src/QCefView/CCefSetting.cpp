@@ -4,6 +4,7 @@
 #include <QDir>
 
 #include "CCefSetting.h"
+#include "CCefWindow.h"
 
 CefString CCefSetting::browser_sub_process_path;
 
@@ -50,5 +51,19 @@ CCefSetting::CCefSetting()
 	locales_directory_path.FromString(
 		QDir::toNativeSeparators(ResPath.filePath(LOCALES_DIRECTORY_NAME)).toStdString());
 
-	user_agent.FromString(QCEF_USER_AGENT);
+	QString userAgent(QCEF_USER_AGENT);
+	if (CCefWindow::enable_high_dpi) {
+		userAgent += " HighDPI";
+	}
+	user_agent.FromString(userAgent.toStdString());
+
+	if (CCefWindow::enable_local_storage) {
+		QString cachePath = CCefWindow::cache_filename;
+		QDir d;
+		if (d.mkpath(cachePath)) {
+			cache_path.FromString(QDir::toNativeSeparators(cachePath).toStdString());
+		} else {
+			cache_path.FromString("");
+		}
+	}
 }

@@ -23,11 +23,11 @@
 class QCefView::Implementation
 {
 public:
-	explicit Implementation(const QString& url, QWindow* parent)
+	explicit Implementation(bool dpi, bool cache, const QString& filename, const QString& url, QWindow* parent)
 		: pCefWindow_(nullptr), pQCefViewHandler_(nullptr)
 	{
 		// Here we must create a QWidget as a wrapper to encapsulate the QWindow
-		pCefWindow_ = new CCefWindow(parent);
+		pCefWindow_ = new CCefWindow(dpi, cache, filename, parent);
 		pCefWindow_->create();
 
 		// Set window info
@@ -36,9 +36,12 @@ public:
 		window_info.SetAsChild((HWND)pCefWindow_->winId(), rc);
 
 		CefBrowserSettings browserSettings;
-		browserSettings.plugins = STATE_DISABLED;	// disable all plugins
+		browserSettings.plugins = STATE_ENABLED;	// disable all plugins
 
-		//
+		if (cache) {
+			browserSettings.local_storage = STATE_ENABLED;
+		}
+
 		pQCefViewHandler_ = new QCefViewBrowserHandler(pCefWindow_);
 
 		// Create the main browser window.
@@ -62,6 +65,11 @@ public:
 	CCefWindow* cefWindow()
 	{
 		return pCefWindow_;
+	}
+
+	QCefViewBrowserHandler* cefViewHandle()
+	{
+		return pQCefViewHandler_;
 	}
 
 	WId getCefWinId()
@@ -276,6 +284,33 @@ public:
 			pQCefViewHandler_->SetKeyboardHandler(handler);
 	}
 
+	void deleteCookies()
+	{
+		if (pQCefViewHandler_) {
+			pQCefViewHandler_->DeleteCookies();
+		}
+	}
+
+	void setCookie(const QString& name,
+		const QString& value,
+		const QString& domain,
+		const QString& path)
+	{
+		if (pQCefViewHandler_) {
+			CefString _name;
+			CefString _value;
+			CefString _domain;
+			CefString _path;
+
+			_name.FromString(name.toStdString());
+			_value.FromString(value.toStdString());
+			_domain.FromString(domain.toStdString());
+			_path.FromString(path.toStdString());
+
+			pQCefViewHandler_->SetCookie(_name, _value, _domain, _path);
+		}
+	}
+
 private:
 	/// <summary>
 	/// 
@@ -288,11 +323,11 @@ private:
 	CefRefPtr<QCefViewBrowserHandler> pQCefViewHandler_;
 };
 
-QCefView::QCefView(const QString url, QWidget* parent /*= 0*/)
+QCefView::QCefView(bool dpi, bool cache, const QString& filename, const QString& url, QWidget* parent)
 	: QWidget(parent)
 	, pImpl_(nullptr)
 {
-	pImpl_ = std::make_unique<Implementation>(url, windowHandle());
+	pImpl_ = std::make_unique<Implementation>(dpi, cache, filename, url, windowHandle());
 
 	QGridLayout* layout = new QGridLayout;
 	layout->setContentsMargins(0, 0, 0, 0);
@@ -320,12 +355,9 @@ QCefView::QCefView(const QString url, QWidget* parent /*= 0*/)
 
 	connect(pImpl_->cefWindow(), SIGNAL(invokeMethodNotify(int, int, const QString&, const QVariantList&)),
 		this, SLOT(onInvokeMethodNotify(int, int, const QString&, const QVariantList&)));
-}
 
-QCefView::QCefView(QWidget* parent /*= 0*/) :
-	QCefView("about:blank", parent)
-{
-
+	connect(pImpl_->cefViewHandle(), SIGNAL(urlRequest(QString)), this, SIGNAL(urlRequest(QString)));
+	connect(pImpl_->cefViewHandle(), SIGNAL(urlChanged(QString)), this, SIGNAL(urlChanged(QString)));
 }
 	 
 QCefView::~QCefView()
@@ -459,6 +491,18 @@ void QCefView::setKeyboardHandler(CefKeyboardHandler* handler)
 {
 	if (pImpl_)
 		return pImpl_->setKeyboardHandler(handler);
+}
+
+void QCefView::deleteCookies()
+{
+	if (pImpl_) 
+		return pImpl_->deleteCookies();
+}
+
+void QCefView::setCookie(const QString& name, const QString& value, const QString& domain, const QString& path)
+{
+	if (pImpl_)
+		return pImpl_->setCookie(name, value, domain, path);
 }
 
 void QCefView::changeEvent(QEvent * event)

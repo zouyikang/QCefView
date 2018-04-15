@@ -24,12 +24,16 @@ public:
 	/// 
 	/// </summary>
 	/// <param name="parent"></param>
-	explicit CCefWindow(QWindow *parent = 0);
+	explicit CCefWindow(bool dpi, bool cache, const QString& filename, QWindow* parent = 0);
 
 	/// <summary>
 	/// 
 	/// </summary>
 	~CCefWindow();
+
+	static bool enable_high_dpi;
+	static bool enable_local_storage;
+	static QString cache_filename;
 
 signals:
 	/// <summary>
