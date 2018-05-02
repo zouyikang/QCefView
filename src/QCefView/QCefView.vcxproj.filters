@@ -5,11 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;cxx;c;def</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
-      <Extensions>qrc;*</Extensions>
-      <ParseFiles>false</ParseFiles>
-    </Filter>
     <Filter Include="Generated Files">
       <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
       <Extensions>moc;h;cpp</Extensions>
@@ -49,9 +44,6 @@
       <Filter>BrowserApp\BrowserDelegates</Filter>
     </ClInclude>
     <ClInclude Include="CefViewBrowserApp\QCefViewBrowserApp.h">
-      <Filter>BrowserApp</Filter>
-    </ClInclude>
-    <ClInclude Include="CefViewBrowserApp\QCefViewBrowserHandler.h">
       <Filter>BrowserApp</Filter>
     </ClInclude>
     <ClInclude Include="CefViewBrowserApp\QCefQueryHandler.h">
@@ -134,6 +126,12 @@
     <ClCompile Include="GeneratedFiles\Release\moc_QCefEvent.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_QCefViewBrowserHandler.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_QCefViewBrowserHandler.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="inc\QCefView.h">
@@ -150,6 +148,9 @@
     </CustomBuild>
     <CustomBuild Include="inc\QCefQuery.h">
       <Filter>include</Filter>
+    </CustomBuild>
+    <CustomBuild Include="CefViewBrowserApp\QCefViewBrowserHandler.h">
+      <Filter>BrowserApp</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>
