@@ -156,9 +156,11 @@ bool QCefViewBrowserHandler::OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
 {
 	CEF_REQUIRE_UI_THREAD();
 
+#if 0
 	if (!event.focus_on_editable_field && event.windows_key_code == VK_BACK) {
 		return true;
 	}
+#endif
 
 	return false;
 }
@@ -240,7 +242,7 @@ bool QCefViewBrowserHandler::DoClose(CefRefPtr<CefBrowser> browser)
 
 	// Allow the close. For windowed browsers this will result in the OS close
 	// event being sent.
-	return false;
+	return true;
 }
 
 void QCefViewBrowserHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
