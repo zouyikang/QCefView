@@ -271,6 +271,7 @@ public:
 
 public:
 	void ShowDevTools(CefRefPtr<CefBrowser> browser, const CefPoint& inspect_element_at);
+	void CloseDevTools(CefRefPtr<CefBrowser> browser);
 	void DeleteCookies();
 	void SetCookie(const CefString& name,
 		const CefString& value,

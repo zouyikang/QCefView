@@ -248,6 +248,11 @@ bool QCefViewBrowserHandler::DoClose(CefRefPtr<CefBrowser> browser)
 		// Set a flag to indicate that the window close should be allowed.
 		is_closing_ = true;
 
+	if (browser->GetHost()->HasDevTools()) {
+		CloseDevTools(browser);
+		return false;
+	}
+
 	// Allow the close. For windowed browsers this will result in the OS close
 	// event being sent.
 	return true;
@@ -558,6 +563,11 @@ void QCefViewBrowserHandler::ShowDevTools(CefRefPtr<CefBrowser> browser, const C
 	CefBrowserSettings settings;
 	info.SetAsPopup(browser->GetHost()->GetWindowHandle(), "DevTools");
 	browser->GetHost()->ShowDevTools(info, browser->GetHost()->GetClient(), settings, inspect_element_at);
+}
+
+void QCefViewBrowserHandler::CloseDevTools(CefRefPtr<CefBrowser> browser)
+{
+	browser->GetHost()->CloseDevTools();
 }
 
 void QCefViewBrowserHandler::DeleteCookies()
