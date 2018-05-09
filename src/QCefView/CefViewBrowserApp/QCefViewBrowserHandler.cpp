@@ -54,7 +54,9 @@ void QCefViewBrowserHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser,
 	CEF_REQUIRE_UI_THREAD();
 
 	model->Clear();
+#if 0
 	model->AddItem(1, "&Show DevTools");
+#endif
 }
 
 bool QCefViewBrowserHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
@@ -64,6 +66,7 @@ bool QCefViewBrowserHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
 {
 	CEF_REQUIRE_UI_THREAD();
 
+#if 0
 	switch (command_id)
 	{
 	case 1:
@@ -72,6 +75,7 @@ bool QCefViewBrowserHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
 	default:
 		break;
 	}
+#endif
 
 	return false;
 }
@@ -161,6 +165,10 @@ bool QCefViewBrowserHandler::OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
 		return true;
 	}
 #endif
+	if (event.windows_key_code == VK_F2 &&
+		event.modifiers == EVENTFLAG_SHIFT_DOWN) {
+		ShowDevTools(browser, CefPoint());
+	}
 
 	return false;
 }
