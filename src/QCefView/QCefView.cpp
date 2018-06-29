@@ -356,8 +356,10 @@ QCefView::QCefView(bool dpi, bool cache, const QString& filename, const QString&
 	connect(pImpl_->cefWindow(), SIGNAL(invokeMethodNotify(int, int, const QString&, const QVariantList&)),
 		this, SLOT(onInvokeMethodNotify(int, int, const QString&, const QVariantList&)));
 
-	connect(pImpl_->cefViewHandle(), SIGNAL(urlRequest(QString)), this, SIGNAL(urlRequest(QString)));
-	connect(pImpl_->cefViewHandle(), SIGNAL(urlChanged(QString)), this, SIGNAL(urlChanged(QString)));
+	connect(pImpl_->cefWindow(), SIGNAL(urlRequest(QString)), this, SIGNAL(urlRequest(QString)));
+	connect(pImpl_->cefWindow(), SIGNAL(urlChanged(QString)), this, SIGNAL(urlChanged(QString)));
+	connect(pImpl_->cefWindow(), SIGNAL(consoleMessage(QString, QString, int)), 
+		this, SLOT(onConsoleMessage(QString, QString, int)));
 }
 	 
 QCefView::~QCefView()
@@ -561,6 +563,11 @@ void QCefView::onQCefQueryRequest(const QCefQuery& query)
 }
 
 void QCefView::onInvokeMethodNotify(int browserId, int frameId, const QString& method, const QVariantList& arguments)
+{
+
+}
+
+void QCefView::onConsoleMessage(const QString &message, const QString &source, int line)
 {
 
 }

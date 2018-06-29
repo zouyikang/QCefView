@@ -54,9 +54,8 @@ void QCefViewBrowserHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser,
 	CEF_REQUIRE_UI_THREAD();
 
 	model->Clear();
-#if 0
+
 	model->AddItem(1, "&Show DevTools");
-#endif
 }
 
 bool QCefViewBrowserHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
@@ -66,7 +65,6 @@ bool QCefViewBrowserHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
 {
 	CEF_REQUIRE_UI_THREAD();
 
-#if 0
 	switch (command_id)
 	{
 	case 1:
@@ -75,7 +73,6 @@ bool QCefViewBrowserHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
 	default:
 		break;
 	}
-#endif
 
 	return false;
 }
@@ -86,7 +83,9 @@ void QCefViewBrowserHandler::OnAddressChange(CefRefPtr<CefBrowser> browser,
 {
 	CEF_REQUIRE_UI_THREAD();
 
-	emit urlChanged(QString::fromStdString(url.ToString()));
+	if (pQCefWindow_) {
+		pQCefWindow_->urlChanged(QString::fromStdString(url.ToString()));
+	}
 }
 
 void QCefViewBrowserHandler::OnTitleChange(CefRefPtr<CefBrowser> browser,
@@ -102,15 +101,20 @@ bool QCefViewBrowserHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser,
 	int line)
 {
 	CEF_REQUIRE_UI_THREAD();
-	if (source.empty() || message.empty())
+	if (message.empty()) {
 		return false;
+	}
 
 	std::string src = source.ToString();
 	std::size_t found = src.find_last_of("/\\");
 	if (found != std::string::npos && found < src.length() - 1)
 		src = src.substr(found + 1);
 
-	__noop(src, message.ToString());
+	if (pQCefWindow_) {
+		pQCefWindow_->consoleMessage(QString::fromStdString(message.ToString()),
+			QString::fromStdString(src), line);
+	}
+	
 	return false;
 }
 
@@ -164,11 +168,12 @@ bool QCefViewBrowserHandler::OnPreKeyEvent(CefRefPtr<CefBrowser> browser,
 	if (!event.focus_on_editable_field && event.windows_key_code == VK_BACK) {
 		return true;
 	}
-#endif
+
 	if (event.windows_key_code == VK_F2 &&
 		event.modifiers == EVENTFLAG_SHIFT_DOWN) {
 		ShowDevTools(browser, CefPoint());
 	}
+#endif
 
 	return false;
 }
@@ -248,14 +253,9 @@ bool QCefViewBrowserHandler::DoClose(CefRefPtr<CefBrowser> browser)
 		// Set a flag to indicate that the window close should be allowed.
 		is_closing_ = true;
 
-	if (browser->GetHost()->HasDevTools()) {
-		CloseDevTools(browser);
-		return false;
-	}
-
 	// Allow the close. For windowed browsers this will result in the OS close
 	// event being sent.
-	return true;
+	return false;
 }
 
 void QCefViewBrowserHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
@@ -360,7 +360,9 @@ bool QCefViewBrowserHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
 	CEF_REQUIRE_UI_THREAD();
 
 	QString url = QString::fromStdString(request->GetURL().ToString());
-	emit urlRequest(url);
+	if (pQCefWindow_) {
+		pQCefWindow_->urlRequest(url);
+	}
 
 	message_router_->OnBeforeBrowse(browser, frame);
 	return false;
@@ -438,9 +440,11 @@ void QCefViewBrowserHandler::CloseAllBrowsers(bool force_close)
 
 	CloseAllPopupBrowsers(force_close);
 
+#if 0
 	if (main_browser_.get())
 		// Request that the main browser close.
 		main_browser_->GetHost()->CloseBrowser(force_close);
+#endif
 }
 
 void QCefViewBrowserHandler::CloseAllPopupBrowsers(bool force_close)

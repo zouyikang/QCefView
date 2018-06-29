@@ -84,6 +84,12 @@ signals:
 	/// <param name="arguments"></param>
 	void invokeMethodNotify(int browserId, int frameId, const QString method, const QVariantList arguments);
 
+	void consoleMessage(const QString &message, const QString &source, int line);
+
+	void urlRequest(const QString& url);
+
+	void urlChanged(const QString& url);
+
 public:
 	/// <summary>
 	/// 

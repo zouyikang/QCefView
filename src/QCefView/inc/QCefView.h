@@ -267,6 +267,8 @@ protected slots:
 	/// <param name="arguments"></param>
 	virtual void onInvokeMethodNotify(int browserId, int frameId, const QString& method, const QVariantList& arguments);
 
+	virtual void onConsoleMessage(const QString &message, const QString &source, int line);
+
 private:
 	/// <summary>
 	/// 

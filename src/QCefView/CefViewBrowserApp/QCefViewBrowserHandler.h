@@ -19,11 +19,8 @@
 #include "../CCefWindow.h"
 #include "QCefQueryHandler.h"
 
-#include <QObject>
-
 class QCefViewBrowserHandler
-	: public QObject
-	, public CefClient
+	: public CefClient
 	, public CefContextMenuHandler
 	, public CefDisplayHandler
 	, public CefDragHandler
@@ -33,8 +30,6 @@ class QCefViewBrowserHandler
 	, public CefLoadHandler
 	, public CefRequestHandler
 {
-	Q_OBJECT
-
 public:
 	/// <summary>
 	/// 
@@ -122,7 +117,7 @@ public:
 		const CefString& source,
 		int line);
 
-	//CefDragHandler methods
+	// CefDragHandler methods
 	virtual bool OnDragEnter(
 		CefRefPtr<CefBrowser> browser,
 		CefRefPtr<CefDragData> dragData,
@@ -277,10 +272,6 @@ public:
 		const CefString& value,
 		const CefString& domain,
 		const CefString& path);
-
-signals:
-	void urlRequest(const QString& url);
-	void urlChanged(const QString& url);
 
 private:
 	/// <summary>
