@@ -344,8 +344,8 @@ void QCefViewBrowserHandler::OnLoadError(CefRefPtr<CefBrowser> browser,
 		"<h2>Error: %2(%3)</h2>"
 		"</body></html>")
 		.arg(url)
-		.arg(msg).
-		arg(errorCode);
+		.arg(msg)
+		.arg(errorCode);
 
 	frame->LoadString(content.toStdString(), failedUrl);
 	if (pQCefWindow_)

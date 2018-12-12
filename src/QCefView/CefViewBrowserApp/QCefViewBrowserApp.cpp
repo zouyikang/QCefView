@@ -32,6 +32,9 @@ void QCefViewBrowserApp::OnBeforeCommandLineProcessing(
 	command_line->AppendSwitch("allow-file-access-from-files");
 	command_line->AppendSwitchWithValue("renderer-process-limit", "1");
 
+	// http https mixed
+	command_line->AppendSwitch("allow-running-insecure-content");
+
 	// proxy
 	command_line->AppendSwitch("no-proxy-server");
 
