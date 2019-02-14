@@ -41,6 +41,8 @@ void QCefViewBrowserApp::OnBeforeCommandLineProcessing(
 	// security
 	command_line->AppendSwitch("disable-web-security");
 
+	command_line->AppendSwitch("ignore-gpu-blacklist");
+
 	// media
 	command_line->AppendSwitchWithValue("enable-media-stream", "1");
 
