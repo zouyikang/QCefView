@@ -94,6 +94,8 @@ public:
 	/// <param name="url"></param>
 	void navigateToUrl(const QString& url);
 
+	void runJavaScriptFun(const QString& code);
+
 	/// <summary>
 	/// 
 	/// </summary>

@@ -192,8 +192,12 @@ bool QCefViewBrowserHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 {
 	CEF_REQUIRE_IO_THREAD();
 
-	// Redirect all popup page into the source frame forcefully
-	frame->LoadURL(target_url);
+	std::string source_url = frame->GetURL().ToString();
+
+	if (source_url.find("www.sobot.com") == std::string::npos) {
+		// Redirect all popup page into the source frame forcefully
+		frame->LoadURL(target_url);
+	}
 
 	// Don't allow new window or tab
 	return true;
@@ -308,7 +312,8 @@ void QCefViewBrowserHandler::OnLoadingStateChange(CefRefPtr<CefBrowser> browser,
 }
 
 void QCefViewBrowserHandler::OnLoadStart(CefRefPtr<CefBrowser> browser,
-	CefRefPtr<CefFrame> frame)
+	CefRefPtr<CefFrame> frame,
+	TransitionType transition_type)
 {
 	CEF_REQUIRE_UI_THREAD();
 	if (pQCefWindow_)

@@ -102,6 +102,14 @@ public:
 		}
 	}
 
+	void runJavaScript(const QString& code)
+	{
+		if (pQCefViewHandler_)
+		{
+			pQCefViewHandler_->GetBrowser()->GetMainFrame()->ExecuteJavaScript(CefString(code.toStdString()), "", 0);
+		}
+	}
+
 	bool browserCanGoBack()
 	{
 		if (pQCefViewHandler_)
@@ -385,6 +393,12 @@ void QCefView::navigateToUrl(const QString& url)
 {
 	if (pImpl_)
 		pImpl_->navigateToUrl(url);
+}
+
+void QCefView::runJavaScriptFun(const QString& code)
+{
+	if (pImpl_)
+		pImpl_->runJavaScript(code);
 }
 
 bool QCefView::browserCanGoBack()
